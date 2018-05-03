@@ -1,0 +1,364 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+FILE *fp1;
+FILE *fp2;
+
+
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+enum engine{petrol_engine=0, gas_engine=1, wankel_engine=2};
+enum car_bodystyle{sedan=0, estate=1, hatchback=2, coupe=3};
+enum transmission{manual=0, nonsynchronous=1, automatic=2, semiautomatic=3};
+enum drive{frontwheel=0, rearwheel=1, allwheel=2, hybridsynergy=3};
+enum steeringwheelposition{right_hand=0, left_hand=1};
+
+struct time1 {
+	int hours;
+	int minutes;
+	int total_minutes;	
+};
+
+struct cars {
+	char *car_brand;
+	char *car_model;
+	engine engine1;
+	car_bodystyle car_bodystyle1;
+	transmission transmission1;
+	drive drive1;
+	steeringwheelposition steeringwheelposition1;
+	int car_number1;
+	int car_number2;
+	int car_number3;
+	char car_number4;
+	char car_number5;
+	char car_number6;
+	char car_number7;
+	int car_number8;
+	int car_number9;
+};
+
+struct routes {
+	int number_route;	
+	char *arrival_point;
+	time1 *departure_time;
+	time1 *arrival_time;
+	int mail_exchange_duration;
+	int car_number1;
+	int car_number2;
+	int car_number3;
+	char car_number4;
+	char car_number5;
+	char car_number6;
+	char car_number7;
+	int car_number8;
+	int car_number9;	
+};
+
+void generateName(char *name, int length);
+void printInfo(cars *c, int i);
+engine generateEngine();
+car_bodystyle generateCarBodystyle();
+transmission generateTransmission();
+drive generateDrive();
+steeringwheelposition generateSteeringWheelPosition();
+void printInfo_routes(routes *r, int i);
+
+
+int main(int argc, char** argv) {
+	srand(time(NULL));
+	
+	int Numberofcars = 20 + rand()%20;
+	
+	cars *c = (cars *)malloc(Numberofcars*sizeof(cars));
+	for (int i = 0; i < Numberofcars; i++)
+    {
+		(c + i)->car_brand = (char *)malloc(5 * sizeof(char));
+		generateName((c + i)->car_brand, 5);
+		
+		(c + i)->car_model = (char *)malloc(5 * sizeof(char));
+		generateName((c + i)->car_model, 5);
+		
+		(c + i)->engine1 = generateEngine();
+		
+		(c + i)->car_bodystyle1 = generateCarBodystyle();
+		
+		(c + i)->transmission1 = generateTransmission();
+		
+		(c + i)->drive1 = generateDrive();
+		
+		(c + i)->steeringwheelposition1 = generateSteeringWheelPosition();
+		
+		(c + i)->car_number1 = rand()%10;
+    	(c + i)->car_number2 = rand()%10;
+    	(c + i)->car_number3 = rand()%10;
+    	(c + i)->car_number4 = 65 + rand() % 24;
+    	(c + i)->car_number5 = 65 + rand() % 24;
+    	(c + i)->car_number6 = 65 + rand() % 24;
+    	(c + i)->car_number7 = '|';
+    	(c + i)->car_number8 = rand()%10;
+    	(c + i)->car_number9 = rand()%10;
+		
+		printInfo(c, i);
+	}
+	printf("\n---------------\n");
+	int Numberofroutes = 20 + rand()%20;
+	
+	routes *r = (routes *)malloc(Numberofroutes*sizeof(routes));
+	for (int i = 0; i < Numberofroutes; i++)
+	{
+		(r + i)->number_route = 1 + rand() % 100;
+		
+		(r + i)->car_number1 = rand()%10;
+    	(r + i)->car_number2 = rand()%10;
+    	(r + i)->car_number3 = rand()%10;
+    	(r + i)->car_number4 = 65 + rand() % 24;
+    	(r + i)->car_number5 = 65 + rand() % 24;
+    	(r + i)->car_number6 = 65 + rand() % 24;
+    	(r + i)->car_number7 = '|';
+    	(r + i)->car_number8 = rand()%10;
+    	(r + i)->car_number9 = rand()%10;		
+		
+		(r + i)->arrival_point = (char *)malloc(5 * sizeof(char));
+		generateName((r + i)->arrival_point, 5);
+		
+		(r + i)->departure_time = (time1 *)malloc(sizeof(time1));
+		(r + i)->departure_time->hours = 6 + rand() % 14;
+		(r + i)->departure_time->minutes = 1 + rand() % 60;
+		
+		(r + i)->departure_time->total_minutes =
+			((r + i)->departure_time->hours * 60) + (r + i)->departure_time->minutes;
+
+        (r + i)->arrival_time = (time1 *)malloc(sizeof(time1));
+		(r + i)->arrival_time->hours = (r + i)->departure_time->hours + 1 + rand() % 3;
+		(r + i)->arrival_time->minutes = 1 + rand() % 60;
+		
+		(r + i)->arrival_time->total_minutes =
+			((r + i)->arrival_time->hours * 60) + (r + i)->arrival_time->minutes;
+
+		
+		(r + i)->mail_exchange_duration = 5 + rand()%16;		
+	    
+	    printInfo_routes(r, i);			
+	}
+	int hours1, hours2;
+	int minutes1, minutes2;
+	printf("\n---------------\n");
+	printf("Please enter time 1 (from 6:00 till 19:00) in hours and in minutes: \n");
+	scanf ("%d:%d", &hours1, &minutes1);
+	printf("Please enter time 2 > time 1 (from 6:00 till 20:00 (excluding)) in hours and in minutes: \n");
+	scanf("%d:%d", &hours2, &minutes2);
+	for (int i = 0; i < Numberofroutes; i++)
+	{
+	    if ((((r+i)->departure_time->total_minutes)>(hours1*60+minutes1))&&(((r+i)->departure_time->total_minutes)<(hours2*60+minutes2))&&(((r + i)->mail_exchange_duration)<10))
+		{
+			printInfo_routes(r, i);
+		}
+	}
+	printf("\n---------------\n");
+	printf("Number of routes (arrival time after 12:00) and information about them: \n");
+	int count=0;
+	for (int i = 0; i < Numberofroutes; i++)
+	{
+	    if (((r+i)->arrival_time->hours)>=12)
+		{
+			count++;			
+		}
+	}
+	printf("%d\n", count);
+	for (int i = 0; i < Numberofroutes; i++)
+	{
+	    if (((r+i)->arrival_time->hours)>=12)
+		{
+			printInfo_routes(r, i);			
+		}
+	}
+	printf("\n---------------\n");
+	int longest = 0;
+	for (int i = 0; i < Numberofroutes; i++)
+	{
+	    if ((((r+i)->arrival_time->total_minutes- (r+i)->departure_time->total_minutes)>longest))
+		{
+			longest=(r+i)->arrival_time->total_minutes - (r+i)->departure_time->total_minutes;			
+		}
+
+	}
+	printf("The total time of the longest trip is %d minutes\n", longest);
+	
+    
+    fp1 = fopen("C:\\route1.txt","w");
+
+    if(fp1 == NULL)
+    {
+        printf("Error!");   
+        exit(1);             
+    }
+    for (int i = 1; i < Numberofroutes; i++)
+	{
+		if (((r + i)->departure_time->hours)<12)
+		{
+            fprintf(fp1,"--> Number of the route: %d\n", (r+i)->number_route);
+			fprintf(fp1," --> Number of the car: %d%d%d%c%c%c%c%d%d\n", 
+	               (r+i)->car_number1, 
+		           (r+i)->car_number2,
+		           (r+i)->car_number3,
+		           (r+i)->car_number4,
+		           (r+i)->car_number5,
+		           (r+i)->car_number6,
+		           (r+i)->car_number7,
+		           (r+i)->car_number8,
+		           (r+i)->car_number9);	            
+            fprintf(fp1," --> Arrival point: %s\n", (r+i)->arrival_point);
+			fprintf(fp1," --> Departure time: %d:%d\n",
+	      		   (r + i)->departure_time->hours,
+				   (r + i)->departure_time->minutes);
+			fprintf(fp1," --> Arrival time: %d:%d\n",
+	    		   (r + i)->arrival_time->hours,
+				   (r + i)->arrival_time->minutes);
+			fprintf(fp1," --> Mail exchange duration (in minutes): %d\n", (r + i)->mail_exchange_duration);
+	        fprintf(fp1," --> Total time of the trip (in minutes): %d\n", 
+	            (r + i)->arrival_time->total_minutes - (r + i)->departure_time->total_minutes);	        
+		}
+	}
+	fclose(fp1);
+	
+	fp2 = fopen("C:\\route2.txt","w");
+
+    if(fp2 == NULL)
+    {
+        printf("Error!");   
+        exit(1);             
+    }
+    for (int i = 1; i < Numberofroutes; i++)
+	{
+		if (((r + i)->departure_time->hours)>=12)
+		{
+            fprintf(fp2,"--> Number of the route: %d\n", (r+i)->arrival_point);
+            fprintf(fp2," --> Number of the car: %d%d%d%c%c%c%c%d%d\n", 
+	               (r+i)->car_number1, 
+		           (r+i)->car_number2,
+		           (r+i)->car_number3,
+		           (r+i)->car_number4,
+		           (r+i)->car_number5,
+		           (r+i)->car_number6,
+		           (r+i)->car_number7,
+		           (r+i)->car_number8,
+		           (r+i)->car_number9);	   
+            fprintf(fp2," --> Departure time: %d:%d\n",
+	      		   (r + i)->departure_time->hours,
+				   (r + i)->departure_time->minutes);
+			fprintf(fp2," --> Arrival time: %d:%d\n",
+	    		   (r + i)->arrival_time->hours,
+				   (r + i)->arrival_time->minutes);
+			fprintf(fp2," --> Mail exchange duration (in minutes): %d\n", (r + i)->mail_exchange_duration);
+	        fprintf(fp2," --> Total time of the trip (in minutes): %d\n", 
+	            (r + i)->arrival_time->total_minutes - (r + i)->departure_time->total_minutes);
+		}
+	}
+	fclose(fp2);
+
+	return 0;
+}
+
+
+void generateName(char *name, int length)
+{
+	if (length == 0)
+		length = 1 + rand() % 6;
+
+	for (int i = 0; i < length; i++)
+	{
+		if (i == 0)
+			*(name + i) = (char)(65 + rand() % 24);
+		else
+			*(name + i) = (char)(97 + rand() % 24);
+	}
+	*(name + length) = '\0';
+}
+
+void printInfo(cars *c, int i)
+{
+	printf("#%d %s \n", i + 1, (c+i)->car_brand);		
+
+	printf(" --> Car model: %s\n", (c+i)->car_model);
+
+	printf(" --> Engine (petrol_engine=0, gas_engine=1, wankel_engine=2): %d\n", (c+i)->engine1);
+	
+	printf(" --> Car body style (sedan=0, estate=1, hatchback=2, coupe=3): %d\n", (c+i)->car_bodystyle1);
+	
+	printf(" --> Transmission (manual=0, nonsynchronous=1, automatic=2, semiautomatic=3): %d\n", (c+i)->transmission1);
+	
+	printf(" --> Drive (frontwheel=0, rearwheel=1, allwheel=2, hybridsynergy=3): %d\n", (c+i)->drive1);
+	
+	printf(" --> Steering wheel position (right-hand=0, left-hand=1): %d\n", (c+i)->steeringwheelposition1);
+	
+	printf(" --> Number of the car: %d%d%d%c%c%c%c%d%d\n", 
+	      (c+i)->car_number1, 
+		  (c+i)->car_number2,
+		  (c+i)->car_number3,
+		  (c+i)->car_number4,
+		  (c+i)->car_number5,
+		  (c+i)->car_number6,
+		  (c+i)->car_number7,
+		  (c+i)->car_number8,
+		  (c+i)->car_number9);
+}
+	
+void printInfo_routes(routes *r, int i)
+{
+	printf(" --> Number of the route: %d\n", (r+i)->number_route);
+	
+	printf(" --> Number of the car: %d%d%d%c%c%c%c%d%d\n", 
+	      (r+i)->car_number1, 
+		  (r+i)->car_number2,
+		  (r+i)->car_number3,
+		  (r+i)->car_number4,
+		  (r+i)->car_number5,
+		  (r+i)->car_number6,
+		  (r+i)->car_number7,
+		  (r+i)->car_number8,
+		  (r+i)->car_number9);	
+	
+	printf(" --> Arrival point: %s\n", (r+i)->arrival_point);
+	
+	printf(" --> Departure time: %d:%d\n",
+	      (r + i)->departure_time->hours,
+		  (r + i)->departure_time->minutes);
+		  
+	printf(" --> Arrival time: %d:%d\n",
+	      (r + i)->arrival_time->hours,
+		  (r + i)->arrival_time->minutes);
+		  
+	printf(" --> Mail exchange duration (in minutes): %d\n", (r + i)->mail_exchange_duration);
+	
+	printf(" --> Total time of the trip (in minutes): %d\n", 
+	      (r + i)->arrival_time->total_minutes - (r + i)->departure_time->total_minutes);
+		  
+}
+
+
+engine generateEngine()
+{
+	return (engine)(0 + rand() % 3);
+}
+
+car_bodystyle generateCarBodystyle()
+{
+	return (car_bodystyle)(0 + rand() % 4);
+}
+
+transmission generateTransmission()
+{
+	return (transmission)(0 + rand() % 4);
+}
+
+drive generateDrive()
+{
+	return (drive)(0 + rand()%4);
+}
+
+steeringwheelposition generateSteeringWheelPosition()
+{
+	return (steeringwheelposition)(0 + rand()%2);
+}
+
